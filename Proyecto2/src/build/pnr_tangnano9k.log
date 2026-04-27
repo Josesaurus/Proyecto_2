@@ -1,0 +1,161 @@
+Info: Series:GW1N-9C Device:GW1NR-9C Package:QFN88P Speed:C6/I5
+Info: Cell anodo_p0[0] not found
+Info: Cell anodo_p0[0] not found
+
+Info: Packing constants..
+Info: Packing Shadow RAM..
+Info: Packing GSR..
+Info: Packing IOs..
+Info: Packing diff IOs..
+Info: Packing IO logic..
+Info: Packing wide LUTs..
+Info: Packing LUT5s..
+Info: Packing LUT6s..
+Info: Packing LUT7s..
+Info: Packing LUT8s..
+Info: Packing ALUs..
+Info: Packing LUT-FFs..
+Info: Packing non-LUT FFs..
+Info: Packing PLLs..
+Info: Checksum: 0x04844ea0
+
+Info: Annotating ports with timing budgets for target frequency 27.00 MHz
+Info: Checksum: 0x04844ea0
+
+Info: Device utilisation:
+Info: 	                 VCC:     1/    1   100%
+Info: 	               SLICE:    63/ 8640     0%
+Info: 	                 IOB:    28/  274    10%
+Info: 	                ODDR:     0/  274     0%
+Info: 	           MUX2_LUT5:    28/ 4320     0%
+Info: 	           MUX2_LUT6:    14/ 2160     0%
+Info: 	           MUX2_LUT7:     7/ 1080     0%
+Info: 	           MUX2_LUT8:     0/ 1056     0%
+Info: 	                 GND:     1/    1   100%
+Info: 	                RAMW:     0/  270     0%
+Info: 	                 GSR:     1/    1   100%
+Info: 	                 OSC:     0/    1     0%
+Info: 	                rPLL:     0/    2     0%
+
+Info: Placed 27 cells based on constraints.
+Info: Creating initial analytic placement for 16 cells, random placement wirelen = 915.
+Info:     at initial placer iter 0, wirelen = 549
+Info:     at initial placer iter 1, wirelen = 490
+Info:     at initial placer iter 2, wirelen = 492
+Info:     at initial placer iter 3, wirelen = 489
+Info: Running main analytical placer, max placement attempts per cell = 10000.
+Info:     at iteration #1, type SLICE: wirelen solved = 490, spread = 490, legal = 490; time = 0.00s
+Info:     at iteration #1, type VCC: wirelen solved = 490, spread = 490, legal = 490; time = 0.00s
+Info:     at iteration #1, type MUX2_LUT7: wirelen solved = 493, spread = 510, legal = 509; time = 0.00s
+Info:     at iteration #1, type GSR: wirelen solved = 509, spread = 509, legal = 509; time = 0.00s
+Info:     at iteration #1, type ALL: wirelen solved = 496, spread = 509, legal = 507; time = 0.00s
+Info: HeAP Placer Time: 0.03s
+Info:   of which solving equations: 0.01s
+Info:   of which spreading cells: 0.00s
+Info:   of which strict legalisation: 0.00s
+
+Info: Running simulated annealing placer for refinement.
+Info:   at iteration #1: temp = 0.000000, timing cost = 0, wirelen = 507
+Info:   at iteration #3: temp = 0.000000, timing cost = 0, wirelen = 498 
+Info: SA placement time 0.01s
+
+Info: Max delay <async> -> <async>: 28.56 ns
+
+Info: Slack histogram:
+Info:  legend: * represents 1 endpoint(s)
+Info:          + represents [1,1) endpoint(s)
+Info: [  8477,   9606) |** 
+Info: [  9606,  10735) |**** 
+Info: [ 10735,  11864) |* 
+Info: [ 11864,  12993) |*** 
+Info: [ 12993,  14122) |***************** 
+Info: [ 14122,  15251) |******** 
+Info: [ 15251,  16380) |************************ 
+Info: [ 16380,  17509) |************************************ 
+Info: [ 17509,  18638) |** 
+Info: [ 18638,  19767) |************ 
+Info: [ 19767,  20896) |********************************************* 
+Info: [ 20896,  22025) |**************************** 
+Info: [ 22025,  23154) |************ 
+Info: [ 23154,  24283) | 
+Info: [ 24283,  25412) | 
+Info: [ 25412,  26541) | 
+Info: [ 26541,  27670) |** 
+Info: [ 27670,  28799) | 
+Info: [ 28799,  29928) | 
+Info: [ 29928,  31057) |** 
+Info: Checksum: 0xdba5b001
+Info: Find global nets...
+Info: Routing globals...
+
+Info: Routing..
+Info: Setting up routing queue.
+Info: Routing 348 arcs.
+Info:            |   (re-)routed arcs  |   delta    | remaining|       time spent     |
+Info:    IterCnt |  w/ripup   wo/ripup |  w/r  wo/r |      arcs| batch(sec) total(sec)|
+Info:        468 |       43        425 |   43   425 |         0|       0.60       0.60|
+Info: Routing complete.
+Info: Router1 time 0.60s
+Info: Checksum: 0x8b0b4000
+
+Info: Critical path report for cross-domain path '<async>' -> '<async>':
+Info: curr total
+Info:  0.0  0.0  Source encoder.x5_IBUF_O$iob.O
+Info: 14.7 14.7    Net button_IBUF_I_O[2] budget 37.037037 ns (7,28) -> (37,1)
+Info:                Sink display_transmision.hex_output_MUX2_LUT7_O_1_I1_MUX2_LUT6_O_I1_MUX2_LUT5_O_I1_LUT4_F_LC.B
+Info:                Defined in:
+Info:                  ../design/module_top.sv:31.28-35.6
+Info:                  ../design/module_error_injection.sv:2.24-2.36
+Info:  1.1 15.8  Source display_transmision.hex_output_MUX2_LUT7_O_1_I1_MUX2_LUT6_O_I1_MUX2_LUT5_O_I1_LUT4_F_LC.F
+Info:  0.3 16.1    Net display_transmision.hex_output_MUX2_LUT7_O_1_I1_MUX2_LUT6_O_I1_MUX2_LUT5_O_I1 budget 6.975408 ns (37,1) -> (37,1)
+Info:                Sink display_transmision.hex_output_MUX2_LUT7_O_1_I1_MUX2_LUT6_O_I1_MUX2_LUT5_O_LC.I1
+Info:                Defined in:
+Info:                  c:\Users\josgu\DOWNLO~1\OSS-CA~1\bin\../share/yosys/gowin/cells_map.v:165.42-165.67
+Info:                  c:\Users\josgu\DOWNLO~1\OSS-CA~1\bin\../share/yosys/gowin/cells_map.v:159.41-159.66
+Info:                  c:\Users\josgu\DOWNLO~1\OSS-CA~1\bin\../share/yosys/gowin/cells_map.v:151.13-151.15
+Info:  0.2 16.3  Source display_transmision.hex_output_MUX2_LUT7_O_1_I1_MUX2_LUT6_O_I1_MUX2_LUT5_O_LC.OF
+Info:  0.3 16.6    Net display_transmision.hex_output_MUX2_LUT7_O_1_I1_MUX2_LUT6_O_I1 budget 6.975408 ns (37,1) -> (37,1)
+Info:                Sink display_transmision.hex_output_MUX2_LUT7_O_1_I1_MUX2_LUT6_O_LC.I1
+Info:                Defined in:
+Info:                  c:\Users\josgu\DOWNLO~1\OSS-CA~1\bin\../share/yosys/gowin/cells_map.v:165.42-165.67
+Info:                  c:\Users\josgu\DOWNLO~1\OSS-CA~1\bin\../share/yosys/gowin/cells_map.v:157.13-157.15
+Info:  0.4 17.0  Source display_transmision.hex_output_MUX2_LUT7_O_1_I1_MUX2_LUT6_O_LC.OF
+Info:  0.3 17.3    Net display_transmision.hex_output_MUX2_LUT7_O_1_I1 budget 6.975408 ns (37,1) -> (37,1)
+Info:                Sink display_transmision.hex_output_MUX2_LUT7_O_1_LC.I1
+Info:                Defined in:
+Info:                  c:\Users\josgu\DOWNLO~1\OSS-CA~1\bin\../share/yosys/gowin/cells_map.v:163.13-163.15
+Info:  0.5 17.8  Source display_transmision.hex_output_MUX2_LUT7_O_1_LC.OF
+Info:  0.9 18.7    Net display_transmision.hex_output[5] budget 6.975408 ns (37,1) -> (38,0)
+Info:                Sink catodo_trans_OBUF_O_1$iob.I
+Info:                Defined in:
+Info:                  ../design/module_top.sv:52.24-55.6
+Info:                  ../design/module_bin_to_hexa.sv:3.24-3.34
+Info: 2.2 ns logic, 16.6 ns routing
+
+Info: Max delay <async> -> <async>: 18.73 ns
+
+Info: Slack histogram:
+Info:  legend: * represents 1 endpoint(s)
+Info:          + represents [1,1) endpoint(s)
+Info: [ 18312,  19057) |** 
+Info: [ 19057,  19802) |** 
+Info: [ 19802,  20547) |** 
+Info: [ 20547,  21292) |** 
+Info: [ 21292,  22037) | 
+Info: [ 22037,  22782) |************* 
+Info: [ 22782,  23527) |********** 
+Info: [ 23527,  24272) |************************ 
+Info: [ 24272,  25017) |**************** 
+Info: [ 25017,  25762) |***************************** 
+Info: [ 25762,  26507) |***************************** 
+Info: [ 26507,  27252) |***************************** 
+Info: [ 27252,  27997) |************************ 
+Info: [ 27997,  28742) |************ 
+Info: [ 28742,  29487) | 
+Info: [ 29487,  30232) | 
+Info: [ 30232,  30977) |* 
+Info: [ 30977,  31722) |* 
+Info: [ 31722,  32467) | 
+Info: [ 32467,  33212) |** 
+
+Info: Program finished normally.
