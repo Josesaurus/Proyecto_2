@@ -688,4 +688,35 @@ El módulo top funciona mediante una integración estructural de nivel superior 
 #### Funcionamiento
 El funcionamiento se basa en una arquitectura de flujo secuencial y concurrente dividida en tres subsistemas principales interconectados por buses lógicos internos, comenzando con la inversión de polaridad de la señal física de reinicio para adecuarla a la lógica activa en alto del sistema (rst). En la primera etapa, el bloque teclado_completo ejecuta el barrido físico de las filas (rows) e intercepta el retorno de las columnas (cols) para entregar un código hexadecimal estable (key_value) junto a un pulso síncrono de confirmación (key_valid). Inmediatamente después, el procesador aritmético sumador captura estos eventos para actualizar sus registros internos, realizar la suma corregida en base 10 y proyectar dinámicamente el resultado o los operandos en el bus interno num_value. Finalmente, el controlador display toma esta palabra de datos de 16 bits y activa los buses físicos de los segmentos (seg) y de selección de ánodos (an) mediante multiplexación por división de tiempo, logrando que los caracteres se dibujen de forma limpia en el display.
 
+## 6. Ejemplo y análisis de una simulación funcional del sistema completo
+Para validar el funcionamiento general del sistema se realizó una simulación utilizando el módulo `top`. Esta simulación permite observar el recorrido completo de la información desde el estímulo de entrada generado sobre el teclado matricial con el debouncer, hasta la activación en los displays de 7 segmentos.
 
+El sistema integrado está compuesto por tres subsistemas principales:
+
+1. Subsistema de lectura del teclado hexadecimal.
+2. Subsistema de almacenamiento y suma aritmética en BCD.
+3. Subsistema de despliegue multiplexado en cuatro displays de 7 segmentos.
+
+En el diseño, estos bloques se conectan dentro del módulo `top.sv` como de costumbre. El teclado entrega un valor de tecla validado, el sumador almacena los operandos y genera el valor que debe mostrarse, y finalmente el módulo de display convierte dicho valor en señales físicas para los ánodos y segmentos.
+
+### 6.2 Simulación del Sistema
+En el caso de prueba del sistema completo se simuló la presión de la tecla 1. Durante la simulación, el módulo `key_scanner` genera un barrido secuencial de las filas mediante la señal rows. Cuando la fila correspondiente se encuentra activa, el testbench coloca `cols = 4'b0001`, simulando de esta manera el cierre del contacto de la tecla.
+
+El módulo `key_decoder` interpreta esta combinación como la tecla hexadecimal 1. Después, el módulo `key_debouncer` verifica que la tecla permanezca estable durante el tiempo requerido y genera un pulso en `key_valid`. En ese mismo momento, `key_value` toma el valor:
+
+```systemverilog 
+key_value = 4'h1
+```
+
+Este valor lo recibe  el `módulo sumador`, el cual lo almacena como parte del número actual. Como el sistema inicia en el estado de captura de la primera señal, el valor mostrado pasa a ser:
+
+```systemverilog 
+num_value = 16'h0001
+```
+
+Por lo tanto, el valor que debe desplegarse en los cuatro displays es:
+
+```systemverilog 
+0001
+```
+### 6.3 Manejo de los displays de 7 segmentos
