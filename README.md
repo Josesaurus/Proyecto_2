@@ -729,7 +729,7 @@ El módulo `display` recibe el valor `num_value[15:0]` y lo divide en cuatro dí
 | Digito 2 | `num_value[11:8]` | 0 |
 | Digito 3 | `num_value[15:12]` | 0 |
 
-El módulo `clk_divider` genera un pulso tick que permite cambiar periódicamente el dígito activo. Luego, `anode_control` actualiza la señal `an[3:0]` para activar un display a la vez. Mientras tanto, el multiplexor interno del módulo `display` selecciona el nibble correspondiente y lo envía al decodificador `hex_to_7seg`.
+El módulo `clk_divider` genera un pulso tick que permite cambiar periódicamente el dígito activo. Luego, `anode_control` actualiza la señal `an[3:0]` para activar un display a la vez. Mientras tanto, el multiplexor interno del módulo display selecciona el nibble correspondiente y lo envía al decodificador `hex_to_7seg`.
 
 Para el caso simulado, se puede observar la siguiente secuencia de multiplexado:
 
@@ -743,3 +743,45 @@ Para el caso simulado, se puede observar la siguiente secuencia de multiplexado:
 Los patrones de `seg[6:0]` corresponden a lógica activa en bajo, es decir, un `0` enciende el segmento y un `1` lo apaga. Por esta razón, el número `1` se representa con `7'b1111001`, mientras que el número `0` se representa con `7'b1000000`.
 
 ### 6.4 Simulación del proceso de suma
+Además de validar la ruta completa desde el teclado hasta el display, se verificó el funcionamiento del bloque aritmético mediante el testbench `sumador_tb.sv`. En esta prueba se ingresó el primer operando `12`, luego se cambió al segundo operando mediante la tecla de comando B, se ingresó el valor `9` y finalmente se solicitó la suma mediante la tecla C.
+
+La secuencia de entrada fue:
+
+```systemverilog 
+1 y 2
+Luego:
+B
+Y por último 
+9 y C
+```
+Esto representa la operación: 
+
+```systemverilog 
+`12 + 9 = 21`
+```
+Durante la estas entradas se observó la siguiente evolución de las señales internas:
+
+```systemverilog 
+num_1   = 0000 a 0001 a 0012
+num_2   = 0000 a 0009
+num_out = 0000 a 0001 a 0012 a 0000 a 0009 a 0021
+```
+
+El resultado final fue:
+```systemverilog 
+num_out = 16'h0021
+```
+
+Esto confirma que el bloque aritmético almacena correctamente los dos operandos y realiza la suma en formato BCD. El resultado `0021` puede ser enviado al módulo `display`, donde se mostraría como `0021` mediante el mismo mecanismo de multiplexado descrito anteriormente.
+
+### 6.5 Análisis general de la simulación
+
+Esta simulación permite verificar que los subsistemas principales se encuentran correctamente interconectados. Primero, el teclado es estimulado mediante señales equivalentes a una presión física. Luego, el bloque de lectura realiza el escaneo, la decodificación y la validación de la tecla. Después, el valor validado se entrega al sumador, donde se almacena o se utiliza como comando de control. Finalmente, el número actual se envía al sistema de visualización.
+
+En la salida del sistema, las señales `an[3:0] y seg[6:0]` permiten comprobar que el valor procesado se transforma en señales compatibles con displays de 7 segmentos. El sistema no enciende los cuatro displays al mismo tiempo, sino que activa uno por uno a alta velocidad. Este proceso de multiplexado permite mostrar un número de cuatro dígitos usando un único bus de segmentos compartido.
+
+Con base en los resultados obtenidos, se concluye que la simulación valida la ruta funcional completa del diseño va del teclado matricial hacia la decodificación, luego al antirrebote, después se suma en BCD, de ahí al multiplexado y por último al 7 segmentos.
+
+Por lo tanto, se puede comprobar que el sistema cumple funcionalmente con el flujo esperado: recibir datos desde un teclado hexadecimal, procesarlos internamente y generar las señales necesarias para desplegar el valor en cuatro displays de 7 segmentos.    
+
+![Testbench del Sumador ](testbenchs/waveforms/sumador.png)
