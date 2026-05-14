@@ -784,4 +784,5 @@ Con base en los resultados obtenidos, se concluye que la simulación valida la r
 
 Por lo tanto, se puede comprobar que el sistema cumple funcionalmente con el flujo esperado: recibir datos desde un teclado hexadecimal, procesarlos internamente y generar las señales necesarias para desplegar el valor en cuatro displays de 7 segmentos.    
 
+### Testbench del Sumador
 ![Testbench del Sumador ](testbenchs/waveforms/sumador.png)
