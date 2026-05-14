@@ -720,3 +720,26 @@ Por lo tanto, el valor que debe desplegarse en los cuatro displays es:
 0001
 ```
 ### 6.3 Manejo de los displays de 7 segmentos
+El módulo `display` recibe el valor `num_value[15:0]` y lo divide en cuatro dígitos BCD. Para el caso `num_value = 16'h0001`, los nibbles son:
+
+| Digito | Bit | Valor |
+|---|---|---|
+| Digito 0 | `num_value[3:0]` | 1 |
+| Digito 1 | `num_value[7:4]` | 0 |
+| Digito 2 | `num_value[11:8]` | 0 |
+| Digito 3 | `num_value[15:12]` | 0 |
+
+El módulo `clk_divider` genera un pulso tick que permite cambiar periódicamente el dígito activo. Luego, `anode_control` actualiza la señal `an[3:0]` para activar un display a la vez. Mientras tanto, el multiplexor interno del módulo `display` selecciona el nibble correspondiente y lo envía al decodificador `hex_to_7seg`.
+
+Para el caso simulado, se puede observar la siguiente secuencia de multiplexado:
+
+| `an[3:0]` | Nibble seleccionado | Valor mostrado | `seg[6:0]` esperado |
+| --------- | ------------------- | -------------- | ------------------- |
+| `4'b0001` | `num_value[3:0]`    | `1`            | `7'b1111001`        |
+| `4'b0010` | `num_value[7:4]`    | `0`            | `7'b1000000`        |
+| `4'b0100` | `num_value[11:8]`   | `0`            | `7'b1000000`        |
+| `4'b1000` | `num_value[15:12]`  | `0`            | `7'b1000000`        |
+
+Los patrones de `seg[6:0]` corresponden a lógica activa en bajo, es decir, un `0` enciende el segmento y un `1` lo apaga. Por esta razón, el número `1` se representa con `7'b1111001`, mientras que el número `0` se representa con `7'b1000000`.
+
+### 6.4 Simulación del proceso de suma
