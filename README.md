@@ -3,11 +3,16 @@
 Daniel Montero
 
 José Guerrero
-## 1.Abreviaturas
+## 1.Abreviaturas:
+
 -**FPGA**: Field Programable Gate Arrays
+
 -**rst**: reset
+
 -**clk**: clock
+
 -**BCD**:  Binary-Coded Decimal
+
 -**bin**: Binary
 
 
