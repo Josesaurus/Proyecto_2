@@ -909,7 +909,7 @@ Se observó la señal `RCO` buscando posibles glitches. Estos pulsos muy cortos 
 
 ## Ejercicio 2: Construcción de un cerrojo Set-Reset con compuertas NAND
 
-En este ejercicio se construyó un cerrojo Set-Reset sincronizado por reloj utilizando compuertas NAND. El circuito se basó en la configuración clásica de un SR clocked latch, donde las entradas `S` y `R` solo afectan la salida cuando la señal de reloj se encuentra activa.
+En este ejercicio se construyó un cerrojo Set-Reset sincronizado por reloj utilizando compuertas NAND. El circuito se basó en la configuración clásica de un SR clocked latch, donde las entradas `S` y `R` solo afectan la salida cuando la señal de reloj se encuentra activa. Cabe aclarar que nuevamente se trabajó con otra pareja para la realización de este ejercicio.
 
 Como referencia se consultó la sección **Clocked SR Flip Flop Using NAND Gate** de CircuitDigest [1], donde se explica que el circuito utiliza compuertas NAND para controlar las entradas `Set` y `Reset` mediante una señal de reloj, permitiendo que el estado de salida cambie únicamente cuando el reloj habilita el circuito. 
 
