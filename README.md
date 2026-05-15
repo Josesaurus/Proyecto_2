@@ -907,3 +907,53 @@ En esta medición se observó la salida `RCO`. La señal aparece únicamente cua
 
 Se observó la señal `RCO` buscando posibles glitches. Estos pulsos muy cortos pueden aparecer porque RCO se genera a partir de lógica combinacional interna. Cuando varios bits del contador cambian casi al mismo tiempo se pueden generar pequeños retardos internos que producen pulsos no deseados. Este fenómeno es más probable durante transiciones donde cambian varios bits.
 
+## Ejercicio 2: Construcción de un cerrojo Set-Reset con compuertas NAND
+
+En este ejercicio se construyó un cerrojo Set-Reset sincronizado por reloj utilizando compuertas NAND. El circuito se basó en la configuración clásica de un SR clocked latch, donde las entradas `S` y `R` solo afectan la salida cuando la señal de reloj se encuentra activa.
+
+Como referencia se consultó la sección **Clocked SR Flip Flop Using NAND Gate** de CircuitDigest [1], donde se explica que el circuito utiliza compuertas NAND para controlar las entradas `Set` y `Reset` mediante una señal de reloj, permitiendo que el estado de salida cambie únicamente cuando el reloj habilita el circuito. 
+
+![Referencia](Ejercicios/Ejercicio_2/circuit_digest.png)
+
+El cerrojo SR posee dos entradas principales: `S` para establecer la salida y `R` para reiniciarla. También posee una entrada de reloj `CLK`, la cual habilita o bloquea el efecto de las entradas.
+
+| `S` | `R` | `CLK` | `Q` |
+|---|---|---|---|
+| 0 | 0 | 1 | Estado anterior | 
+| 1 | 0 | 1 | 1 | Set |
+| 0 | 1 | 1 | 0 | Reset |
+| 1 | 1 | 1 | Indeterminado |
+| X | X | 0 | Estado anterior |
+
+Cuando `CLK = 0`, las entradas quedan bloqueadas y el circuito mantiene su último estado. Cuando `CLK = 1`, el cerrojo responde a las entradas `S` y `R`.
+
+### Medición de la señal de reloj
+![Medición de reloj](Ejercicios/Ejercicio_2/scope_1.png)
+
+En esta captura se observa la señal de reloj utilizada para habilitar el cerrojo. Aquí se usó el canal D1 para Q y D2 para Q negado. La frecuencia medida fue aproximadamente:
+
+```text
+fCLK ≈ 1.93 MHz
+```
+Esta señal controla cuándo el cerrojo puede actualizar su salida.
+
+### Respuesta del cerrojo ante cambios de entrada
+![Respuesta del cerrojo SR](Ejercicios/Ejercicio_2/scope_3.png)
+
+En esta medición se observa el comportamiento de la salida del cerrojo ante cambios en las entradas `S` y `R`. Como se puede observar, la salida no cambia en cualquier momento, sino solamente cuando la señal de reloj `CLK` habilita el circuito. Esto confirma que el cerrojo SR implementado no trabaja de forma completamente asíncrona, ya que su actualización depende del estado de la señal de reloj.
+
+### Verificación con señales Set y Reset
+![Verificación Set-Reset](Ejercicios/Ejercicio_2/scope_5.png)
+
+En esta medición se observa la respuesta del circuito ante las condiciones de `Set` y `Reset`.
+
+Cuando se activa `S` y a su vez `R` permanece desactivado, la salida `Q` pasa a estado alto. Cuando se activa `R` y a su vez `S` permanece desactivado, la salida `Q` pasa a estado bajo.
+
+También se observa que, cuando no existe una nueva condición válida de set o reset, el circuito conserva su estado anterior. Esto demuestra la propiedad de memoria del cerrojo SR.
+
+
+## Referencias
+
+[1] CircuitDigest, “Clocked SR Flip-Flop: Truth Table, Circuit Diagram, Working,” *CircuitDigest*, Jul. 22, 2025. [En línea]. Disponible en: https://circuitdigest.com/electronic-circuits/clocked-sr-flip-flop-truth-table-circuit-diagram-working. [Accedido: Mayo 15, 2026].
+
+
