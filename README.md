@@ -851,4 +851,18 @@ El uso de pines de entrada/salida (constraints) se debe a las señales externas 
 
 En conclusión, el diseño utiliza una fracción pequeña de la FPGA Tang Nano 9K, mostrado en que el consumo de SLICE es de apenas 9%.
 
-## 8
+## 8 Reporte de velocidades máximas de reloj posibles en el diseño
+
+Para verificar la velocidad máxima de operación del diseño se revisó el reporte generado por `nextpnr-gowin` después del pnr. Esta etapa permite estimar si el circuito puede funcionar correctamente a la frecuencia de reloj requerida por el proyecto.
+
+El archivo `pnr_tangnano9k.log` reportó el siguiente resultado para el reloj principal del sistema:
+
+```bash
+Max frequency for clock 'display_inst.clk': 95.26 MHz (PASS at 27.00 MHz)
+```
+
+Esto significa que, según el análisis de temporizado realizado por nextpnr-gowin, el diseño podría operar hasta una frecuencia aproximada de 95.26 MHz. Como la frecuencia mínima requerida para el proyecto es de 27 MHz se cumple la condición de operación del diseño.
+
+## Ejercicios 
+
+### Ejercicio 1: Contadores Sincrónicos.
