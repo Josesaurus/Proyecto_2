@@ -863,6 +863,17 @@ Max frequency for clock 'display_inst.clk': 95.26 MHz (PASS at 27.00 MHz)
 
 Esto significa que, según el análisis de temporizado realizado por nextpnr-gowin, el diseño podría operar hasta una frecuencia aproximada de 95.26 MHz. Como la frecuencia mínima requerida para el proyecto es de 27 MHz se cumple la condición de operación del diseño.
 
+### 8 Análisis de principales problemas hallados durante el trabajo y de las soluciones aplicadas.
+
+
+Durante el desarrollo del proyecto, uno de los principales problemas encontrados fue la transición entre la implementación en código y el funcionamiento físico del circuito. Esta dificultad se presentó especialmente en el manejo del teclado matricial, ya que no solo era necesario describir su lógica, sino también verificar correctamente su conexión física, el barrido de filas y columnas, y la interpretación de cada tecla presionada.
+
+Uno de los problemas más recurrentes fue la implementación del módulo de `debouncer`. En varias pruebas, el sistema no lograba detectar de forma estable las teclas, o generaba múltiples pulsos para una sola presión. Para solucionarlo, se revisó la lógica de validación de la tecla, se ajustaron los tiempos de espera y se realizaron pruebas separadas del teclado antes de integrarlo con el resto del sistema.
+
+Además, una mala división inicial de tareas provocó que se invirtiera más tiempo del necesario en el montaje físico del circuito. En varias ocasiones fue necesario volver a armar o revisar conexiones, lo que retrasó el avance del proyecto. Como solución, se reorganizó el trabajo del grupo, se separaron mejor las responsabilidades entre diseño, simulación, montaje y pruebas, y se documentaron con mayor cuidado las conexiones utilizadas.
+
+En general, estos problemas permitieron comprender mejor la importancia de verificar cada subsistema por separado antes de integrarlo al sistema completo. También evidenciaron la necesidad de una mejor planificación del trabajo en equipo y de una documentación clara para evitar repetir errores durante el montaje y las pruebas físicas.
+
 ## Ejercicios 
 
 ### Ejercicio 1: Contadores Sincrónicos 74LS163.
