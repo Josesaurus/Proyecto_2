@@ -786,3 +786,69 @@ Por lo tanto, se puede comprobar que el sistema cumple funcionalmente con el flu
 
 ### Testbench del Sumador
 ![Testbench del Sumador ](testbenchs/waveforms/sumador.png)
+
+## 7 Análisis de Consumo de Recursos en la FPGA y Consumo de Potencia
+
+Para analizar el consumo de recursos del diseño se utilizaron los reportes generados por las herramientas de síntesis y de ruteo. En este caso se revisaron los archivos `synthesis_tangnano9k.log` y `pnr_tangnano9k.log`, obtenidos después de ejecutar los comandos:
+
+```bash
+make synth
+make pnr
+```
+
+### 7.1  Recursos reportados por el pnr
+El archivo `pnr_tangnano9k.log` reportó la siguiente utilización del dispositivo:
+
+| Recurso     | Utilizado | Disponible | Porcentaje |
+| ----------- | --------: | ---------: | ---------: |
+| `SLICE`     |       783 |       8640 |         9% |
+| `IOB`       |        21 |        274 |         7% |
+| `MUX2_LUT5` |       149 |       4320 |         3% |
+| `MUX2_LUT6` |        70 |       2160 |         3% |
+| `MUX2_LUT7` |        33 |       1080 |         3% |
+| `MUX2_LUT8` |        14 |       1056 |         1% |
+| `RAMW`      |         0 |        270 |         0% |
+| `ODDR`      |         0 |        274 |         0% |
+| `OSC`       |         0 |          1 |         0% |
+
+Teniedo estos resultados en mente, se puede concluir que el diseño utiliza una cantidad baja de recursos de la FPGA. El recurso principal utilizado son los SLICE, con un consumo de 783 de 8640 disponibles, equivalente al 9% del dispositivo. También se utilizan 21 pines de entrada/salida (constraints) de los 274 disponibles, lo que representa un 7%.
+
+### 7.2 Recursos reportados por síntesis
+El archivo `synthesis_tangnano9k.log` reportó para el módulo principal top un total de 1104 celdas. Las más relevantes fueroin:
+
+| Celda       | Cantidad | Función aproximada                                             |
+| ----------- | -------: | -------------------------------------------------------------- |
+| `ALU`       |      162 | Recursos asociados a operaciones aritméticas y lógica de suma. |
+| `DFFC`      |       34 | Flip-flops con control.                                        |
+| `DFFCE`     |       82 | Flip-flops con clock enable y control.                         |
+| `DFFP`      |        1 | Flip-flop adicional con preset/control.                        |
+| `LUT1`      |      322 | Lógica combinacional simple.                                   |
+| `LUT2`      |       71 | Lógica combinacional de dos entradas.                          |
+| `LUT3`      |       71 | Lógica combinacional de tres entradas.                         |
+| `LUT4`      |       72 | Lógica combinacional de cuatro entradas.                       |
+| `MUX2_LUT5` |      149 | Multiplexores y lógica combinacional más amplia.               |
+| `MUX2_LUT6` |       70 | Multiplexores y lógica combinacional más amplia.               |
+| `MUX2_LUT7` |       33 | Multiplexores y lógica combinacional más amplia.               |
+| `MUX2_LUT8` |       14 | Multiplexores y lógica combinacional más amplia.               |
+| `IBUF`      |        6 | Buffers de entrada.                                            |
+| `OBUF`      |       15 | Buffers de salida.                                             |
+
+A partir de los flip-flops reportados en la anterior tabla, el diseño utiliza aproximadamente: 
+
+```bash
+DFFC + DFFCE + DFFP = 34 + 82 + 1 = 117 flip-flops
+```
+
+Estos flip-flops corresponden principalmente a registros internos, estados de máquinas de estado, contadores, sincronización de entradas y almacenamiento de datos.
+
+### 7.3 Interpretación del consumo de recursos
+
+El consumo de LUTs y multiplexores se debe principalmente a la lógica combinacional que usó en el sistema. Esta incluye la decodificación del teclado, la lógica de control del sumador, la suma BCD, los multiplexores internos y el decodificador hacia el 7 segmentos.
+
+El uso de flip-flops se debe a los elementos secuenciales del diseño. Entre ellos se encuentran los registros utilizados para almacenar los operandos, los estados internos de control, el contador del debouncer, el divisor de reloj y la lógica de multiplexado del display.
+
+El uso de pines de entrada/salida (constraints) se debe a las señales externas del sistema, incluyendo el reloj, reset, entradas y salidas del teclado, ánodos de los displays y segmentos.
+
+En conclusión, el diseño utiliza una fracción pequeña de la FPGA Tang Nano 9K, mostrado en que el consumo de SLICE es de apenas 9%.
+
+## 8
