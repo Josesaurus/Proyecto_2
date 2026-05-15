@@ -881,7 +881,7 @@ En esta medición se observa el comportamiento esperado de un contador binario. 
 
 ### Medición del tiempo de propagación CLK-QA
 
-![[Medición tiempo de propagación CLK-QA](Ejercicios/Ejercicio_1/p2_7.png)
+![Medición tiempo de propagación CLK-QA](Ejercicios/Ejercicio_1/p2_7.png)
 
 Se midió el retardo entre el flanco activo del reloj y el cambio en la salida `QA`. Con los cursores del osciloscopio se obtuvo un tiempo aproximado de:
 ```text
@@ -891,19 +891,19 @@ Este retardo corresponde al tiempo que tarda el flip-flop interno del contador e
 
 ### Verificación de cascada con dos contadores
 
-![[Verificación de cascada con dos contadores](Ejercicios/Ejercicio_1/p2_9.png)
+![Verificación de cascada con dos contadores](Ejercicios/Ejercicio_1/p2_9.png)
 
 En esta parte se verificó la conexión en cascada entre dos contadores. El primer contador genera los bits menos significativos y, cuando completa su ciclo de conteo, activa la señal RCO. Esta señal permite habilitar el avance del segundo contador.
 
 De esta forma, dos contadores de 4 bits pueden trabajar juntos como un contador de mayor cantidad de bits.
 
 ### Medición de RCO
-![[Medición de RCO](Ejercicios/Ejercicio_1/p2_10.png)
+![Medición de RCO](Ejercicios/Ejercicio_1/p2_10.png)
 
 En esta medición se observó la salida `RCO`. La señal aparece únicamente cuando el contador alcanza su valor terminal, por lo que se comporta como un pulso de overflow hacia el siguiente contador.
 
 ### Glitches en RCO
-![[Glitches en RCO](Ejercicios/Ejercicio_1/p2_15.png)
+![Glitches en RCO](Ejercicios/Ejercicio_1/p2_15.png)
 
 Se observó la señal `RCO` buscando posibles glitches. Estos pulsos muy cortos pueden aparecer porque RCO se genera a partir de lógica combinacional interna. Cuando varios bits del contador cambian casi al mismo tiempo se pueden generar pequeños retardos internos que producen pulsos no deseados. Este fenómeno es más probable durante transiciones donde cambian varios bits.
 
