@@ -3,6 +3,27 @@
 Daniel Montero
 
 José Guerrero
+
+## Introducción
+
+Este proyecto consiste en el diseño e implementación de un sistema digital sincrónico en SystemVerilog para una FPGA Tang Nano 9K. El sistema en resumidas cuentas funciona como una calculadora sencilla que puede capturar datos desde un teclado matricial hexadecimal, procesarlos internamente y mostrar el resultado en un display de 7 segmentos.
+
+## Definición del problema y objetivos y especificaciones
+
+El problema consiste en diseñar un circuito digital que permita ingresar dos números mediante un teclado hexadecimal, realizar su suma y desplegar el resultado en un display de 7 segmentos.
+
+El objetivo principal es aplicar conceptos de diseño digital sincrónico en HDL, incluyendo lectura de entradas externas, debouncer, sincronización, almacenamiento de datos, suma aritmética y multiplexado de displays.
+
+Las especificaciones principales del sistema son:
+
+- Implementación en SystemVerilog.
+- Uso de la FPGA Tang Nano 9K.
+- Reloj principal de 27 MHz.
+- Entrada mediante teclado matricial hexadecimal.
+- Captura de dos números.
+- Suma aritmética en formato BCD.
+- Visualización en un display de 7 segmentos.
+
 ## 1.Abreviaturas:
 
 -**FPGA**: Field Programable Gate Arrays
