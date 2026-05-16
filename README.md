@@ -688,7 +688,15 @@ El módulo top funciona mediante una integración estructural de nivel superior 
 #### Funcionamiento
 El funcionamiento se basa en una arquitectura de flujo secuencial y concurrente dividida en tres subsistemas principales interconectados por buses lógicos internos, comenzando con la inversión de polaridad de la señal física de reinicio para adecuarla a la lógica activa en alto del sistema (rst). En la primera etapa, el bloque teclado_completo ejecuta el barrido físico de las filas (rows) e intercepta el retorno de las columnas (cols) para entregar un código hexadecimal estable (key_value) junto a un pulso síncrono de confirmación (key_valid). Inmediatamente después, el procesador aritmético sumador captura estos eventos para actualizar sus registros internos, realizar la suma corregida en base 10 y proyectar dinámicamente el resultado o los operandos en el bus interno num_value. Finalmente, el controlador display toma esta palabra de datos de 16 bits y activa los buses físicos de los segmentos (seg) y de selección de ánodos (an) mediante multiplexación por división de tiempo, logrando que los caracteres se dibujen de forma limpia en el display.
 
-## 3. Diagramas de bloques de cada subsistema y su funcionamiento fundamental.
+## 3. Diagrama de bloques de cada subsistema y su funcionamiento fundamental.
+
+![Diagrama de bloques](Sumador/Diagrama.png)
+
+El diagrama de bloques muestra el flujo general del sistema. Primero, el teclado matricial interactúa con el subsistema de lectura del teclado mediante las señales `rows[3:0]` y `cols[3:0]`. Dentro de este subsistema se encuentran los módulos `key_scanner`, `key_decoder` y `key_debouncer`, encargados de escanear el teclado, decodificar la tecla presionada y validar la entrada para evitar rebotes.
+
+Luego, el subsistema de lectura entrega al bloque sumador las señales `key_value` y `key_valid`. El sumador interpreta estas entradas para almacenar los operandos, cambiar de estado y generar el valor que debe mostrarse en pantalla mediante la señal `num_value`.
+
+Finalmente, el subsistema de despliegue en el 7 segmentos recibe `num_value` y genera las señales `seg[6:0]` y `an[3:0]` hacia los displays. Este bloque incluye los módulos `hex_to_7seg` y `anode_control`, los cuales convierten cada dígito al patrón de segmentos correspondiente y seleccionan cuál display se activa durante el multiplexado.
 
 ## 4. Diagramas de estado de las FSM diseñadas.
 
