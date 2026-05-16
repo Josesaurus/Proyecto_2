@@ -688,7 +688,64 @@ El módulo top funciona mediante una integración estructural de nivel superior 
 #### Funcionamiento
 El funcionamiento se basa en una arquitectura de flujo secuencial y concurrente dividida en tres subsistemas principales interconectados por buses lógicos internos, comenzando con la inversión de polaridad de la señal física de reinicio para adecuarla a la lógica activa en alto del sistema (rst). En la primera etapa, el bloque teclado_completo ejecuta el barrido físico de las filas (rows) e intercepta el retorno de las columnas (cols) para entregar un código hexadecimal estable (key_value) junto a un pulso síncrono de confirmación (key_valid). Inmediatamente después, el procesador aritmético sumador captura estos eventos para actualizar sus registros internos, realizar la suma corregida en base 10 y proyectar dinámicamente el resultado o los operandos en el bus interno num_value. Finalmente, el controlador display toma esta palabra de datos de 16 bits y activa los buses físicos de los segmentos (seg) y de selección de ánodos (an) mediante multiplexación por división de tiempo, logrando que los caracteres se dibujen de forma limpia en el display.
 
-## 6. Ejemplo y análisis de una simulación funcional del sistema completo
+## 3. Diagramas de bloques de cada subsistema y su funcionamiento fundamental.
+
+## 4. Diagramas de estado de las FSM diseñadas.
+
+En el diseño se utilizan varias lógicas secuenciales para controlar el flujo de datos del sistema. Las FSM principales se encuentran en el módulo del debouncer del teclado y en el controlador del sumador. Además, algunos módulos como el escáner del teclado y el controlador de ánodos funcionan como secuencias cíclicas simples.
+
+### 4.1 FSM del antirrebote del teclado
+
+El módulo `key_debouncer` se encarga de validar que una tecla presionada sea estable antes de generar la señal `valid`. Esto es necesario porque los botones mecánicos pueden generar rebotes, provocando varias transiciones rápidas cuando en realidad el usuario presionó una sola tecla.
+
+Esta FSM utiliza tres estados principales. En el estado de reposo, el sistema espera a que se detecte una tecla presionada. Cuando se detecta una posible tecla, pasa a un estado de validación, donde verifica que el valor permanezca estable durante un tiempo determinado. Si la tecla se mantiene estable, se genera un pulso de `valid` y el sistema pasa a un estado de espera hasta que la tecla sea liberada. Una vez liberada, la FSM vuelve al estado inicial.
+
+De forma resumida, el flujo es:
+
+| Estado     | Función                                                   |
+| ---------- | --------------------------------------------------------- |
+| `IDLE`     | Espera la detección de una tecla.                         |
+| `DEBOUNCE` | Verifica que la tecla permanezca estable.                 |
+| `PRESSED`  | Espera a que la tecla sea liberada antes de aceptar otra. |
+
+Esta FSM básicamente evita que una sola presión física sea interpretada como varias entradas digitales.
+
+### 4.2 FSM del controlador del sumador
+
+El módulo `sumador` tiene la lógica de control que permite decidir qué debe hacer el sistema con cada tecla validada. Esta FSM controla la captura del primer operando, la captura del segundo operando, la visualización del resultado y la visualización del overflow.
+
+Los estados principales son:
+
+| Estado       | Función                                |
+| ------------ | -------------------------------------- |
+| `NUM_A`      | Captura y muestra el primer operando.  |
+| `NUM_B`      | Captura y muestra el segundo operando. |
+| `SUM_C`      | Muestra el resultado de la suma BCD.   |
+| `OVERFLOW_D` | Muestra el acarreo final de la suma.   |
+
+Al iniciar el sistema, la FSM entra en el estado `NUM_A`, donde los dígitos presionados se almacenan en el primer operando. Cuando se presiona la tecla de control `B`, el sistema cambia al estado `NUM_B`, permitiendo ingresar el segundo operando. Al presionar la tecla `C`, la FSM cambia al estado `SUM_C`, donde se muestra el resultado de la suma. Finalmente, si se presiona la tecla `D`, el sistema pasa al estado `OVERFLOW_D`, donde se muestra el overflow (en caso de haber) de salida.
+
+### 4.3 Secuencia de escaneo del teclado
+
+El módulo `key_scanner` no se implementa como una FSM compleja, pero sí funciona como una secuencia cíclica. Su trabajo es activar una fila del teclado a la vez mediante la señal `rows[3:0]`. Mientras se activa una fila, el sistema revisa las columnas `cols[3:0]` para detectar si existe una tecla presionada.
+
+La secuencia con la que se escanea es:
+
+`Fila 0, Fila 1, Fila 2, Fila 3, Fila 0...`
+
+Esto permite recorrer todo el teclado matricial de forma periódica. Cuando se detecta una tecla, el sistema puede identificarla a partir de la combinación entre la fila activa y la columna detectada.
+
+### 4.4 Secuencia de multiplexado del display
+
+El módulo `anode_control` también funciona como una secuencia cíclica. Su función es activar un display de 7 segmentos a la vez, mientras el módulo display selecciona el dígito correspondiente del número BCD.
+
+La secuencia de activación es:
+
+`Dígito 0, Dígito 1, Dígito 2, Dígito 3, Dígito 0...`
+
+En cada paso se activa una salida diferente de `an[3:0]` y se coloca en `seg[6:0]` el patrón correspondiente al dígito seleccionado. Aunque físicamente solo un display se activa en cada instante, la conmutación ocurre lo suficientemente rápido para que el ojo humano perciba los cuatro dígitos encendidos al mismo tiempo.
+
+## 5. Ejemplo y análisis de una simulación funcional del sistema completo
 Para validar el funcionamiento general del sistema se realizó una simulación utilizando el módulo `top`. Esta simulación permite observar el recorrido completo de la información desde el estímulo de entrada generado sobre el teclado matricial con el debouncer, hasta la activación en los displays de 7 segmentos.
 
 El sistema integrado está compuesto por tres subsistemas principales:
@@ -699,7 +756,7 @@ El sistema integrado está compuesto por tres subsistemas principales:
 
 En el diseño, estos bloques se conectan dentro del módulo `top.sv` como de costumbre. El teclado entrega un valor de tecla validado, el sumador almacena los operandos y genera el valor que debe mostrarse, y finalmente el módulo de display convierte dicho valor en señales físicas para los ánodos y segmentos.
 
-### 6.2 Simulación del Sistema
+### 5.2 Simulación del Sistema
 En el caso de prueba del sistema completo se simuló la presión de la tecla 1. Durante la simulación, el módulo `key_scanner` genera un barrido secuencial de las filas mediante la señal rows. Cuando la fila correspondiente se encuentra activa, el testbench coloca `cols = 4'b0001`, simulando de esta manera el cierre del contacto de la tecla.
 
 El módulo `key_decoder` interpreta esta combinación como la tecla hexadecimal 1. Después, el módulo `key_debouncer` verifica que la tecla permanezca estable durante el tiempo requerido y genera un pulso en `key_valid`. En ese mismo momento, `key_value` toma el valor:
@@ -719,7 +776,7 @@ Por lo tanto, el valor que debe desplegarse en los cuatro displays es:
 ```systemverilog 
 0001
 ```
-### 6.3 Manejo de los displays de 7 segmentos
+### 5.3 Manejo de los displays de 7 segmentos
 El módulo `display` recibe el valor `num_value[15:0]` y lo divide en cuatro dígitos BCD. Para el caso `num_value = 16'h0001`, los nibbles son:
 
 | Digito | Bit | Valor |
@@ -742,7 +799,7 @@ Para el caso simulado, se puede observar la siguiente secuencia de multiplexado:
 
 Los patrones de `seg[6:0]` corresponden a lógica activa en bajo, es decir, un `0` enciende el segmento y un `1` lo apaga. Por esta razón, el número `1` se representa con `7'b1111001`, mientras que el número `0` se representa con `7'b1000000`.
 
-### 6.4 Simulación del proceso de suma
+### 5.4 Simulación del proceso de suma
 Además de validar la ruta completa desde el teclado hasta el display, se verificó el funcionamiento del bloque aritmético mediante el testbench `sumador_tb.sv`. En esta prueba se ingresó el primer operando `12`, luego se cambió al segundo operando mediante la tecla de comando B, se ingresó el valor `9` y finalmente se solicitó la suma mediante la tecla C.
 
 La secuencia de entrada fue:
@@ -774,7 +831,7 @@ num_out = 16'h0021
 
 Esto confirma que el bloque aritmético almacena correctamente los dos operandos y realiza la suma en formato BCD. El resultado `0021` puede ser enviado al módulo `display`, donde se mostraría como `0021` mediante el mismo mecanismo de multiplexado descrito anteriormente.
 
-### 6.5 Análisis general de la simulación
+### 5.5 Análisis general de la simulación
 
 Esta simulación permite verificar que los subsistemas principales se encuentran correctamente interconectados. Primero, el teclado es estimulado mediante señales equivalentes a una presión física. Luego, el bloque de lectura realiza el escaneo, la decodificación y la validación de la tecla. Después, el valor validado se entrega al sumador, donde se almacena o se utiliza como comando de control. Finalmente, el número actual se envía al sistema de visualización.
 
@@ -787,7 +844,7 @@ Por lo tanto, se puede comprobar que el sistema cumple funcionalmente con el flu
 ### Testbench del Sumador
 ![Testbench del Sumador ](testbenchs/waveforms/sumador.png)
 
-## 7 Análisis de Consumo de Recursos en la FPGA y Consumo de Potencia
+## 6 Análisis de Consumo de Recursos en la FPGA y Consumo de Potencia
 
 Para analizar el consumo de recursos del diseño se utilizaron los reportes generados por las herramientas de síntesis y de ruteo. En este caso se revisaron los archivos `synthesis_tangnano9k.log` y `pnr_tangnano9k.log`, obtenidos después de ejecutar los comandos:
 
@@ -796,7 +853,7 @@ make synth
 make pnr
 ```
 
-### 7.1  Recursos reportados por el pnr
+### 6.1  Recursos reportados por el pnr
 El archivo `pnr_tangnano9k.log` reportó la siguiente utilización del dispositivo:
 
 | Recurso     | Utilizado | Disponible | Porcentaje |
@@ -813,7 +870,7 @@ El archivo `pnr_tangnano9k.log` reportó la siguiente utilización del dispositi
 
 Teniedo estos resultados en mente, se puede concluir que el diseño utiliza una cantidad baja de recursos de la FPGA. El recurso principal utilizado son los SLICE, con un consumo de 783 de 8640 disponibles, equivalente al 9% del dispositivo. También se utilizan 21 pines de entrada/salida (constraints) de los 274 disponibles, lo que representa un 7%.
 
-### 7.2 Recursos reportados por síntesis
+### 6.2 Recursos reportados por síntesis
 El archivo `synthesis_tangnano9k.log` reportó para el módulo principal top un total de 1104 celdas. Las más relevantes fueroin:
 
 | Celda       | Cantidad | Función aproximada                                             |
@@ -841,7 +898,7 @@ DFFC + DFFCE + DFFP = 34 + 82 + 1 = 117 flip-flops
 
 Estos flip-flops corresponden principalmente a registros internos, estados de máquinas de estado, contadores, sincronización de entradas y almacenamiento de datos.
 
-### 7.3 Interpretación del consumo de recursos
+### 6.3 Interpretación del consumo de recursos
 
 El consumo de LUTs y multiplexores se debe principalmente a la lógica combinacional que usó en el sistema. Esta incluye la decodificación del teclado, la lógica de control del sumador, la suma BCD, los multiplexores internos y el decodificador hacia el 7 segmentos.
 
@@ -863,7 +920,7 @@ Max frequency for clock 'display_inst.clk': 95.26 MHz (PASS at 27.00 MHz)
 
 Esto significa que, según el análisis de temporizado realizado por nextpnr-gowin, el diseño podría operar hasta una frecuencia aproximada de 95.26 MHz. Como la frecuencia mínima requerida para el proyecto es de 27 MHz se cumple la condición de operación del diseño.
 
-### 8 Análisis de principales problemas hallados durante el trabajo y de las soluciones aplicadas.
+### 7. Análisis de principales problemas hallados durante el trabajo y de las soluciones aplicadas.
 
 
 Durante el desarrollo del proyecto, uno de los principales problemas encontrados fue la transición entre la implementación en código y el funcionamiento físico del circuito. Esta dificultad se presentó especialmente en el manejo del teclado matricial, ya que no solo era necesario describir su lógica, sino también verificar correctamente su conexión física, el barrido de filas y columnas, y la interpretación de cada tecla presionada.
